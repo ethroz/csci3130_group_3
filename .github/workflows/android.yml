@@ -30,9 +30,10 @@ jobs:
         run: |
           echo $JOB_URL
           echo $PACKAGE
-          curl -o artifacts.zip -L -H "PRIVATE-TOKEN: $TOKEN" "$JOB_URL"
-          unzip artifacts.zip apks/* && mv apks/* .
+          sleep 60
           echo Hi > test.txt
+        # curl -o artifacts.zip -L -H "PRIVATE-TOKEN: $TOKEN" "$JOB_URL"
+        # unzip artifacts.zip apks/* && mv apks/* .
       - name: Upload test results
         uses: actions/upload-artifact@v2
         with:
