@@ -18,22 +18,22 @@ run-name: ${{ github.event.inputs.name }}
 jobs:
   ConnectedTests:
     runs-on: ubuntu-latest
-    # strategy:
-    #   matrix:
-    #     api-level: [28, 30, 32, 34]
+    strategy:
+      matrix:
+        api-level: [28, 30, 32, 34]
     steps:
-      - name: Download APKs from Gitlab
+      - name: Download APKs from Repo
         env:
           JOB_URL: ${{ github.event.inputs.job_url }}
           PACKAGE: ${{ github.event.inputs.package }}
           TOKEN: ${{ secrets.TOKEN }}
+          WAIT_TIME: ${{ matrix.api-level }}
         run: |
           echo $JOB_URL
           echo $PACKAGE
-          sleep 10
-          curl -o artifacts.zip -L -H "PRIVATE-TOKEN: $TOKEN" "$JOB_URL"
+          sleep $WAIT_TIME
           echo Hi > test.txt
-        # curl -o artifacts.zip -L -H "PRIVATE-TOKEN: $TOKEN" "$JOB_URL"
+        # curl -s -o artifacts.zip -L -H "PRIVATE-TOKEN: $TOKEN" "$JOB_URL"
         # unzip artifacts.zip apks/* && mv apks/* .
       - name: Upload test results
         uses: actions/upload-artifact@v2
