@@ -3,12 +3,17 @@ name: Run connected tests
 on:
   workflow_dispatch:
     inputs:
+      name:
+        description: 'The unique name of the run'
+        required: true
       job_url:
         description: 'The URL to the repository'
         required: true
       package:
         description: 'The package name of the app to test'
         required: true
+
+run-name: ${{ github.event.inputs.name }}
 
 jobs:
   ConnectedTests:
