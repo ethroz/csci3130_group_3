@@ -30,7 +30,8 @@ jobs:
         run: |
           echo $JOB_URL
           echo $PACKAGE
-          sleep 60
+          sleep 10
+          curl -o artifacts.zip -L -H "PRIVATE-TOKEN: $TOKEN" "$JOB_URL"
           echo Hi > test.txt
         # curl -o artifacts.zip -L -H "PRIVATE-TOKEN: $TOKEN" "$JOB_URL"
         # unzip artifacts.zip apks/* && mv apks/* .
