@@ -1,26 +1,35 @@
 name: Run connected tests
 
 on:
-  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      job_url:
+        description: 'The URL to the repository'
+        required: true
+      package:
+        description: 'The package name of the app to test'
+        required: true
 
 jobs:
   ConnectedTests:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        api-level: [28, 30, 32, 34]
+    # strategy:
+    #   matrix:
+    #     api-level: [28, 30, 32, 34]
     steps:
-      - name: Download APKs from Repo
+      - name: Download APKs from Gitlab
         env:
-          JOB_URL: ${{ github.event.client_payload.job_url }}
+          JOB_URL: ${{ github.event.inputs.job_url }}
+          PACKAGE: ${{ github.event.inputs.package }}
           TOKEN: ${{ secrets.TOKEN }}
         run: |
-          curl -s -o artifacts.zip -L -H "PRIVATE-TOKEN: $TOKEN" "$JOB_URL"
+          echo $JOB_URL
+          echo $PACKAGE
+          curl -o artifacts.zip -L -H "PRIVATE-TOKEN: $TOKEN" "$JOB_URL"
           unzip artifacts.zip apks/* && mv apks/* .
           echo Hi > test.txt
       - name: Upload test results
         uses: actions/upload-artifact@v2
-        if: always()
         with:
           name: test
           path: test.txt
@@ -32,7 +41,7 @@ jobs:
       # - name: Run connected tests
       #   uses: ReactiveCircus/android-emulator-runner@v2
       #   env:
-      #     PACKAGE: ${{ github.event.client_payload.package }}
+      #     PACKAGE: ${{ github.event.inputs.package }}
       #   with:
       #     api-level: ${{ matrix.api-level }}
       #     target: google_apis
