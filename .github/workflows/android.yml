@@ -82,6 +82,8 @@ jobs:
 
       - name: Run connected tests
         uses: ReactiveCircus/android-emulator-runner@v2
+        env:
+            PROJECT: ${{ secrets.PROJECT }}
         with:
           api-level: ${{ matrix.api-level }}
           target: google_apis
@@ -89,8 +91,6 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          env:
-            PROJECT: ${{ secrets.PROJECT }}
           script: |
             cd $PROJECT
             adb logcat *:S TestRunner:V -T 1 & LOGCAT_PID=$!
