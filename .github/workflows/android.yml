@@ -94,10 +94,8 @@ jobs:
             if [ -n "$LOGCAT_PID" ] ; then kill $LOGCAT_PID; fi
 
       - name: Upload test results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: always()
-        env:
-          PROJECT: ${{ secrets.PROJECT }}
         with:
           name: testResultsAPI${{ matrix.api-level }}
-          path: $PROJECT/app/build/reports/androidTests/connected/debug
+          path: ${{ secrets.PROJECT }}/app/build/reports/androidTests/connected/debug
