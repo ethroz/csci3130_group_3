@@ -91,10 +91,9 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            cd $PROJECT
-            chmod +x ./gradlew
+            chmod +x $PROJECT/gradlew
             adb logcat *:S TestRunner:V -T 1 & LOGCAT_PID=$!
-            ./gradlew :app:connectedDebugAndroidTest
+            $PROJECT/gradlew :app:connectedDebugAndroidTest
             if [ -n "$LOGCAT_PID" ] ; then kill $LOGCAT_PID; fi
 
       - name: Upload test results
