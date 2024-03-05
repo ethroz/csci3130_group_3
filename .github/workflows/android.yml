@@ -50,9 +50,9 @@ jobs:
         id: set_arch
         run: |
           if [ "${{ matrix.api-level }}" -gt 30 ]; then
-            echo "arch=x86_64" >> $GITHUB_ENV
+            echo "arch=x86_64" >> "$GITHUB_OUTPUT"
           else
-            echo "arch=x86" >> $GITHUB_ENV
+            echo "arch=x86" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Gradle cache
