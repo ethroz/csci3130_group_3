@@ -38,7 +38,7 @@ jobs:
           unzip artifacts.zip
 
   ConnectedTests:
-    needs: EnableKVM
+    needs: Setup
     runs-on: ubuntu-latest
     strategy:
       matrix:
