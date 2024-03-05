@@ -70,7 +70,7 @@ jobs:
           DOMAIN: ${{ secrets.DOMAIN }}
           OWNER: ${{ secrets.OWNER }}
           PROJECT: ${{ secrets.PROJECT }}
-          USER: ${{ secrets.USER }}
+          PROJ_USER: ${{ secrets.USER }}
           TOKEN: ${{ secrets.TOKEN }}
         with:
           api-level: ${{ matrix.api-level }}
@@ -80,7 +80,7 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            git clone "https://$USER:$TOKEN@$DOMAIN/$OWNER/$PROJECT.git"
+            git clone "https://$PROJ_USER:$TOKEN@$DOMAIN/$OWNER/$PROJECT.git"
             cd $PROJECT
             git checkout $COMMIT
             chmod +x ./gradlew
