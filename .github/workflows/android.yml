@@ -22,19 +22,20 @@ jobs:
       matrix:
         api-level: [28, 30, 32, 34]
     steps:
-      - uses: actions/checkout@v4
-
       - name: Enable KVM
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
-      - name: Get AVD info
-        uses: ./.github/actions/get-avd-info
-        id: avd-info
-        with:
-            api-level: ${{ matrix.api-level }}
+      - name: Set Arch
+        id: set_arch
+        run: |
+          if [ "${{ matrix.api-level }}" -gt 30 ]; then
+            echo "arch=x86_64" >> "$GITHUB_OUTPUT"
+          else
+            echo "arch=x86" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v3
@@ -53,8 +54,8 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          target: ${{ steps.avd-info.outputs.target }}
-          arch: ${{ steps.avd-info.outputs.arch }}
+          target: google_apis
+          arch: ${{ steps.set_arch.outputs.arch }}
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: false
@@ -73,8 +74,8 @@ jobs:
           TOKEN: ${{ secrets.TOKEN }}
         with:
           api-level: ${{ matrix.api-level }}
-          target: ${{ steps.avd-info.outputs.target }}
-          arch: ${{ steps.avd-info.outputs.arch }}
+          target: google_apis
+          arch: ${{ steps.set_arch.outputs.arch }}
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
