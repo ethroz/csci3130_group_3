@@ -79,26 +79,26 @@ jobs:
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
-      # - name: Run connected tests
-      #   uses: ReactiveCircus/android-emulator-runner@v2
-      #   env:
-      #     PROJECT: ${{ secrets.PROJECT }}
-      #   with:
-      #     api-level: ${{ matrix.api-level }}
-      #     target: google_apis
-      #     arch: ${{ steps.set_arch.outputs.arch }}
-      #     force-avd-creation: false
-      #     emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-      #     disable-animations: true
-      #     script: |
-      #       cd $PROJECT
-      #       chmod +x ./gradlew
-      #       adb logcat *:S TestRunner:V -T 1 & LOGCAT_PID=$!
-      #       ./gradlew :app:connectedDebugAndroidTest
-      #       if [ -n "$LOGCAT_PID" ] ; then kill $LOGCAT_PID; fi
+      - name: Run connected tests
+        uses: ReactiveCircus/android-emulator-runner@v2
+        env:
+          PROJECT: ${{ secrets.PROJECT }}
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_apis
+          arch: ${{ steps.set_arch.outputs.arch }}
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            cd $PROJECT
+            chmod +x ./gradlew
+            adb logcat *:S TestRunner:V -T 1 & LOGCAT_PID=$!
+            ./gradlew :app:connectedDebugAndroidTest
+            if [ -n "$LOGCAT_PID" ] ; then kill $LOGCAT_PID; fi
 
-      # - name: Upload test results
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: testResultsAPI${{ matrix.api-level }}
-      #     path: $PROJECT/app/build/reports/androidTests/connected/debug
+      - name: Upload test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: testResultsAPI${{ matrix.api-level }}
+          path: $PROJECT/app/build/reports/androidTests/connected/debug
