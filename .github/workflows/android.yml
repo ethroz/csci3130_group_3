@@ -50,9 +50,9 @@ jobs:
         id: set_arch
         run: |
           if [ "${{ matrix.api-level }}" -gt 30 ]; then
-            echo "::set-output name=arch::x86_64"
+            echo "arch=x86_64" >> $GITHUB_ENV
           else
-            echo "::set-output name=arch::x86"
+            echo "arch=x86" >> $GITHUB_ENV
           fi
 
       - name: Gradle cache
@@ -91,13 +91,16 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
           script: |
-            chmod +x $PROJECT/gradlew
-            adb logcat *:S TestRunner:V -T 1 & LOGCAT_PID=$!
-            $PROJECT/gradlew :app:connectedDebugAndroidTest
+            cd $PROJECT && \
+            chmod +x ./gradlew && \
+            adb logcat *:S TestRunner:V -T 1 & LOGCAT_PID=$! && \
+            ./gradlew :app:connectedDebugAndroidTest
             if [ -n "$LOGCAT_PID" ] ; then kill $LOGCAT_PID; fi
 
       - name: Upload test results
         uses: actions/upload-artifact@v2
+        env:
+          PROJECT: ${{ secrets.PROJECT }}
         with:
           name: testResultsAPI${{ matrix.api-level }}
           path: $PROJECT/app/build/reports/androidTests/connected/debug
